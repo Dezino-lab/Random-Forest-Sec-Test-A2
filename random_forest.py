@@ -1,6 +1,7 @@
 """Train a Random Forest on BEED train/test CSVs and print WEKA-style metrics."""
 
 from pathlib import Path
+from time import perf_counter
 
 import numpy as np
 import pandas as pd
@@ -153,9 +154,13 @@ def main() -> None:
 
     model = RandomForestClassifier(random_state=RANDOM_STATE)
     model.fit(X_train, y_train)
+    test_start = perf_counter()
     y_pred = model.predict(X_test)
     y_proba = model.predict_proba(X_test)
+    test_duration = perf_counter() - test_start
 
+    print(f"Time taken to test model on supplied test set: {test_duration:.2f} seconds")
+    print()
     print_weka_summary(y_test.to_numpy(), y_pred, y_proba, model.classes_, y_train.to_numpy())
 
 
